@@ -377,7 +377,7 @@ def index_doc(filter_tags, doc_list, get_content)
         end
       generated = cmd_list.keys.inject({}) do |list, category|
         links = cmd_list[category].map do |cmd, attr|
-          cmd_file = tag_files.detect { |ent| ent.first == "Documentation/#{cmd}.txt" }
+          cmd_file = tag_files.detect { |ent| ent.first == "Documentation/#{cmd}.#{ext}" }
           next unless cmd_file
 
           content = get_content.call(cmd_file[1])
@@ -387,7 +387,7 @@ def index_doc(filter_tags, doc_list, get_content)
             "linkgit:#{cmd}[#{section}]::\n\t#{attr == 'deprecated' ? '(deprecated) ' : ''}#{match[1]}\n"
           end
         end
-        list.merge!("Documentation/cmds-#{category}.txt" => links.compact.join("\n"))
+        list.merge!("Documentation/cmds-#{category}.#{ext}" => links.compact.join("\n"))
       end
 
       tools = tag_files.select { |ent| ent.first =~ /^mergetools\// }.map do |entry|
@@ -400,8 +400,8 @@ def index_doc(filter_tags, doc_list, get_content)
       end
 
       can_merge, can_diff = tools.transpose.map(&:join)
-      generated["Documentation/mergetools-diff.txt"] = can_diff
-      generated["Documentation/mergetools-merge.txt"] = can_merge
+      generated["Documentation/mergetools-diff.#{ext}"] = can_diff
+      generated["Documentation/mergetools-merge.#{ext}"] = can_merge
 
       get_content_f = proc do |name|
         content_file = tag_files.detect { |ent| ent.first == name }
